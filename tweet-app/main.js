@@ -25,7 +25,7 @@ __webpack_require__.r(__webpack_exports__);
 function AllPostsComponent_app_post_info_1_Template(rf, ctx) { if (rf & 1) {
     const _r5 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "app-post-info", 2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("parentFun", function AllPostsComponent_app_post_info_1_Template_app_post_info_parentFun_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r5); const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](); return ctx_r4.parentFun(); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("reloadAllPosts", function AllPostsComponent_app_post_info_1_Template_app_post_info_reloadAllPosts_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r5); const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](); return ctx_r4.reloadAllPosts(); });
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const post_r2 = ctx.$implicit;
@@ -49,13 +49,10 @@ class AllPostsComponent {
     }
     ngOnInit() {
         this.postService.getAllPosts().subscribe((data) => {
-            console.log("getting list of post");
             this.allPosts = data;
             this.searchPosts = data;
-            console.log(this.allPosts);
         }, (error) => {
             if (error.status != 401) {
-                console.log("no posts avaialable");
             }
         });
         this.postService.filter.subscribe((author) => {
@@ -68,21 +65,18 @@ class AllPostsComponent {
             }
         });
     }
-    parentFun() {
+    reloadAllPosts() {
         this.postService.getAllPosts().subscribe((data) => {
-            console.log("getting list of post");
             this.allPosts = data;
             this.searchPosts = data;
-            console.log(this.allPosts);
         }, (error) => {
             if (error.status != 401) {
-                console.log("no posts avaialable");
             }
         });
     }
 }
 AllPostsComponent.ɵfac = function AllPostsComponent_Factory(t) { return new (t || AllPostsComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](src_app_services_user_user_service__WEBPACK_IMPORTED_MODULE_1__["UserService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](src_app_services_post_post_service__WEBPACK_IMPORTED_MODULE_2__["PostService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_3__["Router"])); };
-AllPostsComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: AllPostsComponent, selectors: [["app-all-posts"]], decls: 3, vars: 2, consts: [[3, "post", "i", "parentFun", 4, "ngFor", "ngForOf"], ["class", "jumbotron jumbotron-fluid  alert-post", 4, "ngIf"], [3, "post", "i", "parentFun"], [1, "jumbotron", "jumbotron-fluid", "alert-post"], [1, "text-muted"]], template: function AllPostsComponent_Template(rf, ctx) { if (rf & 1) {
+AllPostsComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: AllPostsComponent, selectors: [["app-all-posts"]], decls: 3, vars: 2, consts: [[3, "post", "i", "reloadAllPosts", 4, "ngFor", "ngForOf"], ["class", "jumbotron jumbotron-fluid  alert-post", 4, "ngIf"], [3, "post", "i", "reloadAllPosts"], [1, "jumbotron", "jumbotron-fluid", "alert-post"], [1, "text-muted"]], template: function AllPostsComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, AllPostsComponent_app_post_info_1_Template, 1, 2, "app-post-info", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](2, AllPostsComponent_div_2_Template, 3, 0, "div", 1);
@@ -191,14 +185,12 @@ class UserService {
         this.router.navigate(['/login']);
     }
     authenticate(username, password) {
-        console.log("Sending authentication request to the rest point");
         let credentials = btoa(username + ':' + password);
         let headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_0__["HttpHeaders"]();
         headers = headers.set('Authorization', 'Basic ' + credentials);
         return this.httpClient.get(this.authenticationUrl, { headers });
     }
     addUser(user) {
-        console.log("User details in add User is : " + user);
         return this.httpClient.post(this.registerUrl, user);
     }
 }
@@ -357,7 +349,7 @@ class PostInfoComponent {
         this.userService = userService;
         this.postService = postService;
         this.router = router;
-        this.parentFun = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
+        this.reloadAllPosts = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
         this.reloadUserPosts = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
         this.commentflag = false;
         this.isDeletedPost = false;
@@ -367,7 +359,7 @@ class PostInfoComponent {
     addLikeToPost(tweetid) {
         this.postService.addLikeToPost(tweetid).subscribe((data) => {
             this.reloadUserPosts.emit();
-            this.parentFun.emit();
+            this.reloadAllPosts.emit();
         });
     }
     deletePost(postId) {
@@ -375,17 +367,14 @@ class PostInfoComponent {
         this.postService.deletePost(postId).subscribe((data) => {
             this.isDeletedPost = false;
             this.reloadUserPosts.emit();
-            this.parentFun.emit();
+            this.reloadAllPosts.emit();
         }, (error) => {
             this.isDeletedPost = false;
         });
     }
     addcomment(tweetid) {
-        console.log(tweetid);
-        console.log(this.comment);
         if (this.comment) {
             if (this.comment.trim()) {
-                console.log(this.comment.trim());
                 this.commentflag = true;
                 const commentmessage = {
                     commentMessage: this.comment.trim()
@@ -393,7 +382,7 @@ class PostInfoComponent {
                 this.postService.addCommentToPost(commentmessage, tweetid).subscribe((data) => {
                     setTimeout(() => {
                         this.commentflag = false;
-                        this.parentFun.emit();
+                        this.reloadAllPosts.emit();
                         this.reloadUserPosts.emit();
                     }, 2000);
                 });
@@ -416,7 +405,7 @@ class PostInfoComponent {
     }
 }
 PostInfoComponent.ɵfac = function PostInfoComponent_Factory(t) { return new (t || PostInfoComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](src_app_services_user_user_service__WEBPACK_IMPORTED_MODULE_1__["UserService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](src_app_services_post_post_service__WEBPACK_IMPORTED_MODULE_2__["PostService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_3__["Router"])); };
-PostInfoComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: PostInfoComponent, selectors: [["app-post-info"]], inputs: { post: "post", i: "i" }, outputs: { parentFun: "parentFun", reloadUserPosts: "reloadUserPosts" }, decls: 49, vars: 20, consts: [[1, "card", "mb-2"], [1, "user-profile", "mb-1"], ["src", "assets/snow.jpg", "alt", "Avatar"], [1, "ml-2"], ["class", "text-muted", "data-toggle", "collapse", 3, "href", 4, "ngIf"], [1, "collapse", "post_time", "pointer", 3, "id"], [1, "dropdown-item"], [3, "click"], [1, "card_top", "loading-top"], ["class", "spinner-border loading-icon", "role", "status", 4, "ngIf"], ["src", "assets/snow.jpg", 3, "alt"], [1, "card-body", "body_padding"], [1, "like-symbol", "material-icons", 3, "click"], ["data-toggle", "collapse", 1, "mt-1", "text-muted", 3, "href"], [1, "material-icons", "comment-symbol"], [1, "post_time", "text-muted", "mt-1"], [1, "font-weight-bold"], [4, "ngIf"], [1, "pointer"], [1, "comment_indent"], [4, "ngFor", "ngForOf"], [1, "comment_indent", "collapse", 3, "id"], ["class", "mt-1", 4, "ngIf"], ["data-toggle", "collapse", 1, "text-muted", 3, "href"], ["aria-expanded", "false", 1, "edit_post", "material-icons"], ["role", "status", 1, "spinner-border", "loading-icon"], [1, "sr-only"], ["data-toggle", "collapse", "aria-expanded", "true", 1, "text-muted", 3, "href"], [1, "text-break"], [1, "mt-1"], ["type", "text", "placeholder", "Add your comment.", "name", "comment", 1, "comment-input", 3, "ngModel", "ngModelChange"], [1, "btn", "bg-purple", "text-light", "btn-sm", "post_time", 3, "click"], [1, "alert", "alert-secondary"]], template: function PostInfoComponent_Template(rf, ctx) { if (rf & 1) {
+PostInfoComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: PostInfoComponent, selectors: [["app-post-info"]], inputs: { post: "post", i: "i" }, outputs: { reloadAllPosts: "reloadAllPosts", reloadUserPosts: "reloadUserPosts" }, decls: 49, vars: 20, consts: [[1, "card", "mb-2"], [1, "user-profile", "mb-1"], ["src", "assets/snow.jpg", "alt", "Avatar"], [1, "ml-2"], ["class", "text-muted", "data-toggle", "collapse", 3, "href", 4, "ngIf"], [1, "collapse", "post_time", "pointer", 3, "id"], [1, "dropdown-item"], [3, "click"], [1, "card_top", "loading-top"], ["class", "spinner-border loading-icon", "role", "status", 4, "ngIf"], ["src", "assets/snow.jpg", 3, "alt"], [1, "card-body", "body_padding"], [1, "like-symbol", "material-icons", 3, "click"], ["data-toggle", "collapse", 1, "mt-1", "text-muted", 3, "href"], [1, "material-icons", "comment-symbol"], [1, "post_time", "text-muted", "mt-1"], [1, "font-weight-bold"], [4, "ngIf"], [1, "pointer"], [1, "comment_indent"], [4, "ngFor", "ngForOf"], [1, "comment_indent", "collapse", 3, "id"], ["class", "mt-1", 4, "ngIf"], ["data-toggle", "collapse", 1, "text-muted", 3, "href"], ["aria-expanded", "false", 1, "edit_post", "material-icons"], ["role", "status", 1, "spinner-border", "loading-icon"], [1, "sr-only"], ["data-toggle", "collapse", "aria-expanded", "true", 1, "text-muted", 3, "href"], [1, "text-break"], [1, "mt-1"], ["type", "text", "placeholder", "Add your comment.", "name", "comment", 1, "comment-input", 3, "ngModel", "ngModelChange"], [1, "btn", "bg-purple", "text-light", "btn-sm", "post_time", 3, "click"], [1, "alert", "alert-secondary"]], template: function PostInfoComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](2, "img", 2);
@@ -588,16 +577,13 @@ class LoginComponent {
             const username = loginForm.value.username.trim();
             const password = loginForm.value.password;
             this.userService.authenticate(username, password).subscribe((data) => {
-                console.log("login succesfull");
                 this.isLoginValid = true;
                 this.userService.setLoggedIn(true);
                 this.userService.setToken(data.token);
                 this.userService.setUsername(data.username);
                 this.router.navigate(['/']);
-                console.log(data);
             }, (error) => {
                 this.isLoginValid = false;
-                console.log("login failed");
                 if (error.status == 401) {
                     this.error = 'Invalid Usename/Password';
                 }
@@ -773,7 +759,6 @@ class UserPostsComponent {
     }
     ngOnInit() {
         this.postService.getUserPosts().subscribe((data) => {
-            console.log("getting list of post");
             this.userPosts = data;
         }, (error) => {
             if (error.status == 401) {
@@ -786,9 +771,7 @@ class UserPostsComponent {
         });
     }
     reloadUserPosts() {
-        console.log("reload user posts calling");
         this.postService.getUserPosts().subscribe((data) => {
-            console.log("getting list of post");
             this.userPosts = data;
         }, (error) => {
             if (error.status == 401) {
@@ -1274,8 +1257,6 @@ class SignupComponent {
             }, 5000);
         }, (error) => {
             this.errorUser = true;
-            console.log("error is ");
-            console.log(error);
         });
     }
     isConfirmPasswordValid() {
@@ -1695,7 +1676,6 @@ class PostService {
         return this.httpClient.put(this.updatePostUrl + post.id, post, this.getHttpOptions());
     }
     addPost(post) {
-        console.log(post);
         return this.httpClient.post(`${this.addPostUrl}${this.userService.getUsername()}/add`, post, this.getHttpOptions());
     }
     addCommentToPost(comment, tweetId) {
@@ -1800,7 +1780,6 @@ class PostEditComponent {
                     postMessage: post.postMessage,
                     hasTag: '#' + post.hasTag
                 });
-                console.log(this.editPostForm);
             });
         });
     }
